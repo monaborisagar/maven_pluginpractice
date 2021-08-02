@@ -1,6 +1,48 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.example</groupId>
-  <artifactId>MavenPlugin</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.example</groupId>
+	<artifactId>MavenPlugin</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+	<build>
+		<plugins>
+			<!-- <plugin> <artifactId>maven-clean-plugin</artifactId> <version>3.1.0</version> 
+				<executions> <execution> <id>auto-clean</id> <phase>initialize</phase> <goals> 
+				<goal>clean</goal> </goals> </execution> </executions> </plugin> -->   <!--this plugin is bydefault remove target dependancy mvn clean:clean first 
+				is plugin name and second is goal name -->
+
+			<plugin>  <!--this plugin is used to customised remove some files other than evn target 
+					files -->
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+				<excludeDefaultDirectories>true</excludeDefaultDirectories>  <!--by default clean goal will remove target 
+				directory, but if you wsnt to remove the one which is there in fileset then this is used  -->
+					<filesets>
+						<fileset>
+							<directory>${basedir}/target</directory>
+							
+							<includes>
+								<include>classes/test.docx</include>
+							</includes>
+						<!-- 	<excludes>
+								<exclude>classes/test.docx</exclude>
+							</excludes> -->
+							<!-- <excludes> <exclude>classes/test.docx</exclude> </excludes> -->
+
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 </project>
