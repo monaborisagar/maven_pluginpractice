@@ -5,12 +5,29 @@
 	<groupId>com.example</groupId>
 	<artifactId>MavenPlugin</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-
+	<packaging>jar</packaging> <!--for creating jar, atlest one main should be there -->
 
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
+
+
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>5.3.9</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>5.5.5.Final</version>
+		</dependency>
+
+	</dependencies>
 	<build>
 		<plugins>
 			<!-- <plugin> <artifactId>maven-clean-plugin</artifactId> <version>3.1.0</version> 
@@ -23,18 +40,16 @@
 				<artifactId>maven-clean-plugin</artifactId>
 				<version>3.1.0</version>
 				<configuration>
-				<excludeDefaultDirectories>true</excludeDefaultDirectories>  <!--by default clean goal will remove target 
-				directory, but if you wsnt to remove the one which is there in fileset then this is used  -->
+					<excludeDefaultDirectories>true</excludeDefaultDirectories>  <!--by default clean goal will remove target directory, but if you wsnt to 
+						remove the one which is there in fileset then this is used -->
 					<filesets>
 						<fileset>
 							<directory>${basedir}/target</directory>
-							
+
 							<includes>
 								<include>classes/test.docx</include>
 							</includes>
-						<!-- 	<excludes>
-								<exclude>classes/test.docx</exclude>
-							</excludes> -->
+							<!-- <excludes> <exclude>classes/test.docx</exclude> </excludes> -->
 							<!-- <excludes> <exclude>classes/test.docx</exclude> </excludes> -->
 
 							<followSymlinks>false</followSymlinks>
@@ -42,7 +57,41 @@
 					</filesets>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<!-- this plugin will compile classes to the version privided and add 
+					to target's class folder 2.command to run this plugin is mvn compiler:compile -->
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>  <!--when in maven default lifecycle this goal comes it work with this phase  -->
+						</goals>
+						<configuration>
+							<outputDirectory>
+								${project.build.directory}/libs <!--project.build.directory means target and libs folder  -->
+							</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+
 	</build>
 
 </project>
+<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-compiler-plugin</artifactId> 
+	<version>3.3</version> <configuration> <source>1.8</source> <target>1.8</target> 
+	<goalPrefix>abc</goalPrefix> </configuration> </plugin> -->
