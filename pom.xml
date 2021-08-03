@@ -10,10 +10,17 @@
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven-compiler-plugin-version>2.3.2</maven-compiler-plugin-version>
 	</properties>
 
 
 	<dependencies>
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -61,6 +68,8 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin-version}</version>
+
 				<!-- this plugin will compile classes to the version privided and add 
 					to target's class folder 2.command to run this plugin is mvn compiler:compile -->
 				<configuration>
@@ -69,6 +78,9 @@
 					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
+			<!--this will copy all jars to lib folders and will needed in jar plugin 
+				to set classpath so that jar will not attach all dependancy to jar but just 
+				give classpath and lib shoulds be accessible -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -77,18 +89,65 @@
 						<id>copy-dependencies</id>
 						<phase>prepare-package</phase>
 						<goals>
-							<goal>copy-dependencies</goal>  <!--when in maven default lifecycle this goal comes it work with this phase  -->
+							<goal>copy-dependencies</goal>  <!--when in maven default lifecycle this goal comes it work with this phase -->
 						</goals>
 						<configuration>
 							<outputDirectory>
-								${project.build.directory}/libs <!--project.build.directory means target and libs folder  -->
+								${project.build.directory}/libs <!--project.build.directory means 
+									target and libs folder -->
 							</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>   <!-- jar plugin is needed , to give classpath mtf-inf so it will search all 
+					dependancy in there -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.2.0</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>libs/</classpathPrefix>
+							<mainClass>
+								com.example.MavenPlugin
+							</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<!-- accembly plugin accemble all jar dependancy with jar file so that 
+				will be helpful to run standsalone jar with below command $ java -jar MavenPlugin-0.0.1-SNAPSHOT-jar-with-dependencies.jar 
+				this is the way to create executable jar 2021-08-02 19:59:28 WARN test:11 
+				- this is warining messages -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<archive>
+								<manifest>
+									<mainClass>
+										maven_pluginpractice.test
+									</mainClass>
+								</manifest>
+							</archive>
+							<descriptorRefs>
+							<!--MavenPlugin-0.0.1-SNAPSHOT-jar-with-dependencies  -->
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
-
 	</build>
 
 </project>
